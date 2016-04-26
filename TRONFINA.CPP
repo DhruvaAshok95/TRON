@@ -5,19 +5,18 @@
 #include<graphics.h>
 #include<bios.h>
 #include<dos.h>
-#include<bmplib.h>
-#include"MOUSE.CPP"
-int px,py;
-int qx,qy;
-char player1[20];
-char player2[20];
+#include"MOUSE.CPP" //refer mouse.cpp in list of files
+int px,py; //for moving a pixel p
+int qx,qy;  // for moving a pixel q
+char player1[20]; //name of player 1 
+char player2[20]; //name of player 2
 int curkey;
 class mm
 {
 	public: void main_menu();
 	void inst();
 }m;
-void disp_win2()
+void disp_win2() // to display the winner
 {
 	char s[30];
 	int i;
@@ -46,7 +45,7 @@ void disp_win2()
 	outtextxy(100,100,s);
 	delay(200);
 }
-void disp_win1()
+void disp_win1() //to display the winner
 {
 	char s[30];
 	int i;
@@ -76,6 +75,10 @@ void disp_win1()
 	delay(200);
 }
 int check_collision(int mode)
+/* Collision detection is done by getting the NEXT pixel in the direction in which a line from either player is currently moving.
+If the returned pixel is NOT black, it indicates that a collision has occured, and appropriately, the winner is decided, 
+based on whose line collided. Additionally, it checks if the line goes out of the boundaries as well.
+*/
 {
 	int ret=0;
 	if(px<0||px>getmaxx()||py<0||py>getmaxy())
@@ -189,7 +192,7 @@ void start_screen()
 
 	getch();
 }
-void mm::inst()
+void mm::inst() //Instructions on how to play the game
 {
 	cleardevice();
 	settextstyle(3,0,2);
@@ -226,7 +229,8 @@ void enter_names()
 }
 void start_game()
 {
-	enter_names();
+// the program uses bioskey(int) to return what key has been pressed, and therefore decide how each user's line should behave.
+	
 	cleardevice();
 	int key,ree=0, curkey2=8292, curkey3=19200;px=0; py=200; qy=200; qx=getmaxx()-1;
 	while(curkey!=283&&ree!=1)
@@ -310,9 +314,9 @@ void mm::main_menu()
 	while(flag==0)
 	{
 		mo.show_mouse();
-		mo.get_status();
+		mo.get_status(); //maps click of mouse
 		if(i==0){ cx=10; cy=10;delay(100); }
-		if((cx>=200&&cx<=400)&&(cy>=100&&cy<=150)){mo.hide_mouse(); flag=1; start_game();}
+		if((cx>=200&&cx<=400)&&(cy>=100&&cy<=150)){mo.hide_mouse(); flag=1; enter_names(); start_game();}
 		else if((cx>=200&&cx<=400)&&(cy>=200&&cy<=250)){mo.hide_mouse();flag=1; inst();}
 		else if((cx>=200&&cx<=400)&& (cy>=300&&cy<=350)){exit(0);}
 		i=1;
@@ -321,7 +325,7 @@ void mm::main_menu()
 
 
 }
-char again()
+char again() //asking the user if he/she wants to play again
 {
 	cleardevice();
 	setcolor(WHITE);
@@ -339,15 +343,25 @@ void main()
 {
 	int a=9, b=2,i=0;
 	initgraph(&a,&b,"c://tc//bgi");
-	char ch='Y';
+	char ch='N';
 	if(i==0)
 	start_screen();
-	while(ch=='Y')
+	while(1)
 	{
-	cleardevice();
-	m.main_menu();
-	getch();
-	getch();
-	ch=again();
+		if(ch=='Y')
+		{
+			cleardevice();
+			start_game();
+			getch();
+			getch();
+		}
+		else
+		{
+			cleardevice();
+			m.main_menu();
+			getch(); getch();
+		}
+		ch=again();
+		
 	}
 }
